@@ -1,0 +1,67 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+// Function to calculate the mean of a vector of values
+double calculateMean(const vector<double>& values) {
+    double sum = 0.0;
+    for (const double& value : values) {
+        sum += value;
+    }
+    return sum / values.size();
+}
+
+// Function to calculate the coefficient of determination (R-squared)
+double calculateRSquared(const vector<double>& x, const vector<double>& y,
+                         double slope, double intercept) {
+    double yMean = calculateMean(y);
+    double ssTotal = 0.0;
+    double ssResidual = 0.0;
+
+    for (int i = 0; i < x.size(); i++) {
+        double predictedY = slope * x[i] + intercept;
+        ssTotal += pow(y[i] - yMean, 2);
+        ssResidual += pow(y[i] - predictedY, 2);
+    }
+
+    return 1.0 - (ssResidual / ssTotal);
+}
+
+// Linear regression function
+void linearRegression(const vector<double>& x, const vector<double>& y,
+                      double& slope, double& intercept) {
+    double xMean = calculateMean(x);
+    double yMean = calculateMean(y);
+
+    double numerator = 0.0;
+    double denominator = 0.0;
+
+    for (int i = 0; i < x.size(); i++) {
+        numerator += (x[i] - xMean) * (y[i] - yMean);
+        denominator += pow(x[i] - xMean, 2);
+    }
+
+    slope = numerator / denominator;
+    intercept = yMean - slope * xMean;
+}
+
+int main() {
+    // Sample input data
+    vector<double> x = {1, 2, 3, 4, 5};
+    vector<double> y = {2, 4, 6, 8, 10};
+
+    // Perform linear regression
+    double slope, intercept;
+    linearRegression(x, y, slope, intercept);
+
+    // Print the equation of the regression line
+    cout << "Regression line equation: y = " << slope << "x + " << intercept << endl;
+
+    // Calculate R-squared
+    double rSquared = calculateRSquared(x, y, slope, intercept);
+    cout << "R-squared: " << rSquared << endl;
+
+    return 0;
+}
